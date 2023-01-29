@@ -13,70 +13,78 @@ std::array<int, 26> values = {
 class word
 {
 public:
-	word(std::string w) : name{ w }
-	{}
+    word(std::string w) : name{ w }
+    {}
 	
-	// Check if the word is part of letters
-	bool check_match(std::string letters)
-	{
-		for (char c : name)
-		{
-			auto pos = letters.find(c, 0);
-			if (pos == std::string::npos)
-				return false;
-			
-			// if the letter is in the word, calculate its value
-			value += values[c - 'a'];
-			
-			// remove used letters
-			letters.erase(pos, 1);
-		}
-		return possible = true;
-	}
+    // Check if the word is part of letters
+    bool check_match(std::string letters)
+    {
+        for (char c : name)
+        {
+            auto pos = letters.find(c, 0);
+            if (pos == std::string::npos)
+                return false;
 
-	std::string name;
-	int value = 0;
-	bool possible = false;
+            // if the letter is in the word, calculate its value
+            value += values[c - 'a'];
+
+            // remove used letters
+            letters.erase(pos, 1);
+        }
+        return possible = true;
+    }
+
+    std::string name;
+    int value = 0;
+    bool possible = false;
 };
 
 // Example for testing
 /*
 std::vector<std::string> example{
-	"9",
-	"because",
-	"first",
-	"these",
-	"could",
-	"which",
-	"hichwq",
-	"hicquwh"
+    "9",
+    "because",
+    "first",
+    "these",
+    "could",
+    "which",
+    "hichwq",
+    "hicquwh"
 }; */
 
 int main() {
-	// Get input
-	std::vector<std::string> lines;
-	std::string line;
-	while (std::getline(std::cin, line)) {
-		if (line.empty())
-			break;
-		lines.push_back(line);
-	}
-	//std::vector<std::string> lines = example;
+    // Get input
+    std::vector<std::string> lines;
+    std::string line;
+    while (std::getline(std::cin, line))
+    {
+        if (line.empty())
+            break;
+        lines.push_back(line);
+    }
+    //std::vector<std::string> lines = example;
 
-	// Isolate last element (letters)
-	// Erase first element (count) and last element (letters)
-	std::string letters = lines.back();
-	lines.erase(lines.begin());
-	lines.erase(lines.end() - 1);
+    // Isolate last element (letters)
+    // Erase first element (count) and last element (letters)
+    std::string letters = lines.back();
+    lines.erase(lines.begin());
+    lines.erase(lines.end() - 1);
 
-	std::vector<word> words;
-	for (std::string line : lines)
-	{
-		word newword{ line };
-		if (newword.check_match(letters) == true)
-			words.push_back(newword);
-	}
+    // Go through each word, checking if it matches. Add the matched words to the list
+    // If a word matches, its value is automatically calculated
+    std::vector<word> words;
+    for (std::string line : lines)
+    {
+        word newword{ line };
+        if (newword.check_match(letters) == true)
+        words.push_back(newword);
+    }
 
-	auto it = std::max_element(words.begin(), words.end(), [](word& l, word& r) {return l.value < r.value;  });
-	std::cout << it->name;
+    // extract the word with the highest value
+    auto it = std::max_element(words.begin(), words.end(),
+                               [] (word& l, word& r)
+                               {
+                                   return l.value < r.value;
+                               });
+    std::cout << it->name;
 }
